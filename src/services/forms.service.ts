@@ -1,8 +1,8 @@
 import { prisma } from "../lib/prisma";
-import { FormsSchemaType } from "../schema/input.schema";
+import { FormsCreateSchemaType, FormsUpdateSchemaType } from "../schema/forms.input.schema";
 
 export class FormsService {
-    async executeCreateForms({title, fields}:FormsSchemaType) {
+    async executeCreateForms({title, fields}:FormsCreateSchemaType) {
         const forms = await prisma.forms.create({
             data: {
                 title,
@@ -10,5 +10,27 @@ export class FormsService {
             }
         })
         return forms 
+    }
+
+    async executeGetForms() {
+        const forms = await prisma.forms.findMany()
+        console.log(forms);
+        
+        return forms
+    }
+
+    async executeUpdateForms( data :FormsUpdateSchemaType){
+        console.log(typeof(data.id));
+        const {id,fields,title} = data
+        const forms = await prisma.forms.update({
+            where: {
+                id
+            },
+            data: {
+                title,
+                fields
+            }
+        })
+        return forms    
     }
 }
