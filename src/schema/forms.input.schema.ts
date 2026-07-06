@@ -12,11 +12,14 @@ export const formsCreateSchema = z.object({
     fields: z.array(FieldsSchema)
 })
 
+export const formsUpdateSchemaParams = z.object({
+    id: z.coerce.number().int().positive()
+})
 export const formsUpdateSchema = z.object({
-    id: z.number().int().min(1),
     title: z.string().min(3),
     fields: z.array(FieldsSchema)
 })
 
 export type FormsCreateSchemaType = z.infer<typeof formsCreateSchema>
 export type FormsUpdateSchemaType = z.infer<typeof formsUpdateSchema>
+export type FormsUpdateSchemaParamsType = z.infer<typeof formsUpdateSchemaParams>

@@ -2,11 +2,12 @@ import { prisma } from "../lib/prisma";
 import { FormsCreateSchemaType, FormsUpdateSchemaType } from "../schema/forms.input.schema";
 
 export class FormsService {
-    async executeCreateForms({title, fields}:FormsCreateSchemaType) {
+    async executeCreateForms(payload:FormsCreateSchemaType) {
+        
         const forms = await prisma.forms.create({
             data: {
-                title,
-                fields
+                title: payload.title,
+                fields: payload.fields
             }
         })
         return forms 
@@ -19,9 +20,9 @@ export class FormsService {
         return forms
     }
 
-    async executeUpdateForms( data :FormsUpdateSchemaType){
-        console.log(typeof(data.id));
-        const {id,fields,title} = data
+    async executeUpdateForms( id: number, payload:FormsUpdateSchemaType){
+        
+        const {fields,title} = payload
         const forms = await prisma.forms.update({
             where: {
                 id

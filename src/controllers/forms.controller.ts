@@ -2,24 +2,24 @@ import {FastifyReply, FastifyRequest } from "fastify";
 import { formsCreateSchema, formsUpdateSchema } from "../schema/forms.input.schema";
 import { FormsService } from "../services/forms.service";
 import { z, ZodError } from "zod";
+import { AppError } from "../error/AppError";
 
 export async function createForms(request:FastifyRequest, reply: FastifyReply){
-    try {
-        console.log(typeof(request.body))
-        const {title, fields} = formsCreateSchema.parse(request.body)
-        console.log(title, fields)
+    
+       
+        const payload = formsCreateSchema.parse(request.body)
+        console.log(payload)
+        if (!payload) {
+            throw new AppError(400, "Invalid request payload");
+        }
+        // COLOCAR VALIDADORES DE ERRO NO RESTO DAS FUNÇÕES DE CONTROLLER
         
         const formsService = new FormsService()
 
-        const forms = await formsService.executeCreateForms({title, fields})
+        const forms = await formsService.executeCreateForms(payload)
 
         reply.status(201).send(forms)
-    } catch (error){
-        if(error instanceof z.ZodError){
-            console.error(error.message)
-            reply.status(400)
-        } 
-    }
+    
 }
 
 export async function getForms(request:FastifyRequest, reply: FastifyReply){
@@ -30,12 +30,13 @@ export async function getForms(request:FastifyRequest, reply: FastifyReply){
 }
 
 export async function updateForms(request:FastifyRequest, reply:FastifyReply) {
-    try {
-        console.log(typeof(request.body))
-        const data = formsUpdateSchema.parse(request.body)
-        const formsService = new FormsService()
+    try {   
+        const {id} = request.params as {id: number}
+        const payload = formsUpdateSchema.parse(request.body)
         
-        const formsUpdate = await formsService.executeUpdateForms(data)
+        const formsService = new FormsService()
+
+        const formsUpdate = await formsService.executeUpdateForms(id,payload)
         reply.send(formsUpdate)
     }
     catch (error){

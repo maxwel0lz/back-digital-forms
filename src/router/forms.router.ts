@@ -11,5 +11,5 @@ export async function formRouter(app: FastifyInstance) {
     app.get("/forms", getForms );
 
     //PUT
-    app.put("/forms", updateForms );
+    app.put("/forms/:id", updateForms );
 }

@@ -1,9 +1,13 @@
 import Fastify from "fastify"
 import { formRouter } from "./router/forms.router"
+import { registerErrorHandler } from "./error/error-handler"
 
 export const app = Fastify()
 
+
 app.register(formRouter)
+
+registerErrorHandler(app)
 
 app.get("/", async (request, reply) => {
   return { 
