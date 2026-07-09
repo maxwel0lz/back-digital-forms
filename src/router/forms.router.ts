@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createForms, getForms, updateForms,  } from "../controllers/forms.controller";
+import { createForms, deleteForms, getForms, updateForms,  } from "../controllers/forms.controller";
 
 
 export async function formRouter(app: FastifyInstance) {
@@ -12,4 +12,7 @@ export async function formRouter(app: FastifyInstance) {
 
     //PUT
     app.put("/forms/:id", updateForms );
+
+    //DELETE
+    app.delete("/forms/:id", deleteForms );
 }

@@ -1,5 +1,5 @@
 import {FastifyReply, FastifyRequest } from "fastify";
-import { formsCreateSchema, formsUpdateSchema } from "../schema/forms.input.schema";
+import { formsCreateSchema, formsUpdateSchema, formsUpdateSchemaParams } from "../schema/forms.input.schema";
 import { FormsService } from "../services/forms.service";
 import { z, ZodError } from "zod";
 import { AppError } from "../error/AppError";
@@ -30,25 +30,33 @@ export async function getForms(request:FastifyRequest, reply: FastifyReply){
 }
 
 export async function updateForms(request:FastifyRequest, reply:FastifyReply) {
-    try {   
-        const {id} = request.params as {id: number}
-        const payload = formsUpdateSchema.parse(request.body)
-        
-        const formsService = new FormsService()
+    
+    const formsService = new FormsService()
 
-        const formsUpdate = await formsService.executeUpdateForms(id,payload)
-        reply.send(formsUpdate)
+    const {id} = formsUpdateSchemaParams.parse(request.params)
+    
+    
+    const payload = formsUpdateSchema.parse(request.body)
+    
+
+    const formsUpdate = await formsService.executeUpdateForms(id,payload)
+    if(!formsUpdate){
+        throw new AppError(404, "Form not found")
     }
-    catch (error){
-        if(error instanceof z.ZodError){
-            console.error(error.message)
-            return reply.status(400).send(error.issues)
-        }
 
-        console.error(error);
+    reply.send(formsUpdate)
+    
+    
+}
 
-        return reply.status(500).send({
-            message: "Erro interno do servidor"
-        });
-    }
+export async function deleteForms(request:FastifyRequest, reply:FastifyReply) {
+    const formsService = new FormsService()
+    const {id} = formsUpdateSchemaParams.parse(request.params)
+
+    await formsService.executeDeleteForms(id)
+
+    
+    reply.status(204).send()
+    
+
 }

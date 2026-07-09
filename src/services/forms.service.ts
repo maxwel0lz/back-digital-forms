@@ -1,3 +1,4 @@
+import { AppError } from "../error/AppError";
 import { prisma } from "../lib/prisma";
 import { FormsCreateSchemaType, FormsUpdateSchemaType } from "../schema/forms.input.schema";
 
@@ -20,10 +21,23 @@ export class FormsService {
         return forms
     }
 
+
+
     async executeUpdateForms( id: number, payload:FormsUpdateSchemaType){
         
+        const formExists = await prisma.forms.findUnique({
+            where: {
+                id
+            }
+        })
+
+        if(!formExists){
+            throw new AppError(404, "Form not found")
+        }
+        
         const {fields,title} = payload
-        const forms = await prisma.forms.update({
+        
+        return await prisma.forms.update({
             where: {
                 id
             },
@@ -31,7 +45,24 @@ export class FormsService {
                 title,
                 fields
             }
+        })   
+    }
+
+    async executeDeleteForms(id: number) {
+        const formExists = await prisma.forms.findUnique({
+            where: {
+                id
+            }
         })
-        return forms    
+
+        if(!formExists){
+            throw new AppError(404, "Form not found")
+        }
+
+        return await prisma.forms.delete({
+            where: {
+                id
+            }
+        })
     }
 }
