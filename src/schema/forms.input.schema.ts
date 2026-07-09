@@ -3,7 +3,7 @@ import { z }from "zod";
 // Data entry schemes for forms
 export const FieldsSchema = z.object({
     label: z.string().min(2).max(100),
-    type: z.enum(['text', 'email', 'number']),
+    type: z.enum(['text', 'email', 'number',"radio","checkbox","select"]),
     required: z.boolean().default(false)
 })
 
